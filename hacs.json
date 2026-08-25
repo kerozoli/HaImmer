@@ -1,0 +1,6 @@
+{
+  "name": "ImmerGas",
+  "hacs_hide_default_branch": false,
+  "render_readme": true,
+  "homeassistant": "2024.2.0"
+}

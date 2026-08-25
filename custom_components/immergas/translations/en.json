@@ -1,0 +1,27 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "path": "API path",
+          "username": "Username",
+          "password": "Password",
+          "scan_interval": "Update interval (seconds)",
+          "timeout": "Request timeout (seconds)",
+          "stable_threshold": "Stable threshold (seconds)"
+        },
+        "description": "Set up the ImmerGas REST integration."
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect. Please check host, port, path and credentials.",
+      "invalid_auth": "Authentication failed. Please check username and password.",
+      "unknown": "Unexpected error."
+    },
+    "abort": {
+      "already_configured": "Device is already configured."
+    }
+  }
+}
