@@ -39,8 +39,8 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
         vol.Required(CONF_HOST, default=DEFAULT_HOST): str,
         vol.Required(CONF_PORT, default=DEFAULT_PORT): cv.positive_int,
         vol.Required(CONF_PATH, default=DEFAULT_PATH): str,
-        vol.Required(CONF_USERNAME): str,
-        vol.Required(CONF_PASSWORD): str,
+        vol.Optional(CONF_USERNAME, default=""): str,
+        vol.Optional(CONF_PASSWORD, default=""): str,
         vol.Optional(CONF_SCAN_INTERVAL, default=DEFAULT_SCAN_INTERVAL): cv.positive_int,
         vol.Optional(CONF_TIMEOUT, default=DEFAULT_TIMEOUT): cv.positive_int,
         vol.Optional(CONF_STABLE_THRESHOLD, default=DEFAULT_STABLE_THRESHOLD): cv.positive_int,
@@ -52,7 +52,9 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
     """Validate the user input by trying to reach the device."""
     session = async_get_clientsession(hass)
     url = f"http://{data[CONF_HOST]}:{data[CONF_PORT]}{data[CONF_PATH]}"
-    auth = aiohttp.BasicAuth(data[CONF_USERNAME], data[CONF_PASSWORD])
+    username = data.get(CONF_USERNAME, "")
+    password = data.get(CONF_PASSWORD, "")
+    auth = aiohttp.BasicAuth(username, password) if username or password else None
     timeout = data.get(CONF_TIMEOUT, DEFAULT_TIMEOUT)
 
     try:

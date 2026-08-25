@@ -6,8 +6,8 @@
           "host": "Host",
           "port": "Port",
           "path": "API path",
-          "username": "Username",
-          "password": "Password",
+          "username": "Username (optional)",
+          "password": "Password (optional)",
           "scan_interval": "Update interval (seconds)",
           "timeout": "Request timeout (seconds)",
           "stable_threshold": "Stable threshold (seconds)"

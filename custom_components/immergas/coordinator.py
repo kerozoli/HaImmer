@@ -63,8 +63,10 @@ class ImmerGasCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             CONF_STABLE_THRESHOLD, DEFAULT_STABLE_THRESHOLD
         )
         self._url = f"http://{self._host}:{self._port}{self._path}"
-        self._auth = aiohttp.BasicAuth(
-            config_entry.data[CONF_USERNAME], config_entry.data[CONF_PASSWORD]
+        username = config_entry.data.get(CONF_USERNAME, "")
+        password = config_entry.data.get(CONF_PASSWORD, "")
+        self._auth = (
+            aiohttp.BasicAuth(username, password) if username or password else None
         )
         self._session = async_get_clientsession(hass)
         self._last_values: dict[str, Any] = {}
