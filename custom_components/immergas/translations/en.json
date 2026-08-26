@@ -10,7 +10,8 @@
           "password": "Password (optional)",
           "scan_interval": "Update interval (seconds)",
           "timeout": "Request timeout (seconds)",
-          "stable_threshold": "Stable threshold (seconds)"
+          "stable_threshold": "Stable threshold (seconds)",
+          "minimum_throttle_threshold": "Minimum throttle threshold (seconds)"
         },
         "description": "Set up the ImmerGas REST integration."
       }

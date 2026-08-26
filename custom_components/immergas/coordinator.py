@@ -24,20 +24,23 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 from homeassistant.util import dt as dt_util
 
 from .const import (
+    CONF_MINIMUM_THROTTLE_THRESHOLD,
+    CONF_STABLE_THRESHOLD,
     DATA_KEY_BOILER,
     DATA_KEY_HEATING,
     DATA_KEY_TEMPERATURE,
     DATA_KEY_THROTTLE,
     DEFAULT_HOST,
+    DEFAULT_MINIMUM_THROTTLE_THRESHOLD,
     DEFAULT_PATH,
     DEFAULT_PORT,
     DEFAULT_SCAN_INTERVAL,
     DEFAULT_STABLE_THRESHOLD,
     DEFAULT_TIMEOUT,
     DOMAIN,
+    MINIMUM_THROTTLE_VALUE_KW,
     STABLE_KEY_TEMPERATURE,
     STABLE_KEY_THROTTLE,
-    CONF_STABLE_THRESHOLD,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -45,7 +48,6 @@ _LOGGER = logging.getLogger(__name__)
 RAW_KEYS = (DATA_KEY_TEMPERATURE, DATA_KEY_THROTTLE, DATA_KEY_HEATING, DATA_KEY_BOILER)
 STABLE_MAP: dict[str, str] = {
     DATA_KEY_TEMPERATURE: STABLE_KEY_TEMPERATURE,
-    DATA_KEY_THROTTLE: STABLE_KEY_THROTTLE,
 }
 
 
@@ -62,6 +64,9 @@ class ImmerGasCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self._stable_threshold = config_entry.data.get(
             CONF_STABLE_THRESHOLD, DEFAULT_STABLE_THRESHOLD
         )
+        self._minimum_throttle_threshold = config_entry.data.get(
+            CONF_MINIMUM_THROTTLE_THRESHOLD, DEFAULT_MINIMUM_THROTTLE_THRESHOLD
+        )
         self._url = f"http://{self._host}:{self._port}{self._path}"
         username = config_entry.data.get(CONF_USERNAME, "")
         password = config_entry.data.get(CONF_PASSWORD, "")
@@ -71,6 +76,7 @@ class ImmerGasCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self._session = async_get_clientsession(hass)
         self._last_values: dict[str, Any] = {}
         self._last_changed: dict[str, datetime] = {}
+        self._minimum_throttle_since: datetime | None = None
 
         update_interval = config_entry.data.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
 
@@ -115,5 +121,15 @@ class ImmerGasCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 changed_at = self._last_changed.get(key, now)
                 elapsed = (now - changed_at).total_seconds()
                 data[stable_key] = elapsed > self._stable_threshold
+
+        current_throttle = data.get(DATA_KEY_THROTTLE)
+        if current_throttle == MINIMUM_THROTTLE_VALUE_KW:
+            if self._minimum_throttle_since is None:
+                self._minimum_throttle_since = now
+            elapsed = (now - self._minimum_throttle_since).total_seconds()
+            data[STABLE_KEY_THROTTLE] = elapsed >= self._minimum_throttle_threshold
+        else:
+            self._minimum_throttle_since = None
+            data[STABLE_KEY_THROTTLE] = False
 
         return data
