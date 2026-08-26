@@ -21,9 +21,11 @@ from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .const import (
+    CONF_MINIMUM_THROTTLE_THRESHOLD,
     CONF_PATH,
     CONF_STABLE_THRESHOLD,
     DEFAULT_HOST,
+    DEFAULT_MINIMUM_THROTTLE_THRESHOLD,
     DEFAULT_PATH,
     DEFAULT_PORT,
     DEFAULT_SCAN_INTERVAL,
@@ -44,6 +46,9 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
         vol.Optional(CONF_SCAN_INTERVAL, default=DEFAULT_SCAN_INTERVAL): cv.positive_int,
         vol.Optional(CONF_TIMEOUT, default=DEFAULT_TIMEOUT): cv.positive_int,
         vol.Optional(CONF_STABLE_THRESHOLD, default=DEFAULT_STABLE_THRESHOLD): cv.positive_int,
+        vol.Optional(
+            CONF_MINIMUM_THROTTLE_THRESHOLD, default=DEFAULT_MINIMUM_THROTTLE_THRESHOLD
+        ): cv.positive_int,
     }
 )
 

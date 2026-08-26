@@ -36,7 +36,7 @@ BINARY_SENSOR_DESCRIPTIONS: tuple[BinarySensorEntityDescription, ...] = (
     ),
     BinarySensorEntityDescription(
         key=STABLE_KEY_THROTTLE,
-        name="ImmerGas Stable Throttle",
+        name="ImmerGas Minimum Throttle",
     ),
 )
 
