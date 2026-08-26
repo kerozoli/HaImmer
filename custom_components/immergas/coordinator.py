@@ -39,8 +39,8 @@ from .const import (
     DEFAULT_TIMEOUT,
     DOMAIN,
     MINIMUM_THROTTLE_VALUE_KW,
+    MINIMUM_THROTTLE_KEY,
     STABLE_KEY_TEMPERATURE,
-    STABLE_KEY_THROTTLE,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -127,9 +127,9 @@ class ImmerGasCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             if self._minimum_throttle_since is None:
                 self._minimum_throttle_since = now
             elapsed = (now - self._minimum_throttle_since).total_seconds()
-            data[STABLE_KEY_THROTTLE] = elapsed >= self._minimum_throttle_threshold
+            data[MINIMUM_THROTTLE_KEY] = elapsed >= self._minimum_throttle_threshold
         else:
             self._minimum_throttle_since = None
-            data[STABLE_KEY_THROTTLE] = False
+            data[MINIMUM_THROTTLE_KEY] = False
 
         return data

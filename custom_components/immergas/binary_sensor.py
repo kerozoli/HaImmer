@@ -16,8 +16,8 @@ from .const import (
     DATA_KEY_BOILER,
     DATA_KEY_HEATING,
     DOMAIN,
+    MINIMUM_THROTTLE_KEY,
     STABLE_KEY_TEMPERATURE,
-    STABLE_KEY_THROTTLE,
 )
 from .coordinator import ImmerGasCoordinator
 
@@ -35,7 +35,7 @@ BINARY_SENSOR_DESCRIPTIONS: tuple[BinarySensorEntityDescription, ...] = (
         name="ImmerGas Stable Temperaute",
     ),
     BinarySensorEntityDescription(
-        key=STABLE_KEY_THROTTLE,
+        key=MINIMUM_THROTTLE_KEY,
         name="ImmerGas Minimum Throttle",
     ),
 )
