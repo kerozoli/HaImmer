@@ -25,4 +25,4 @@ DATA_KEY_HEATING: Final = "heating"
 DATA_KEY_BOILER: Final = "boilerOn"
 
 STABLE_KEY_TEMPERATURE: Final = "stable_temperature"
-STABLE_KEY_THROTTLE: Final = "stable_throttle"
+MINIMUM_THROTTLE_KEY: Final = "minimum_throttle"
