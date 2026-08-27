@@ -155,7 +155,7 @@ class ImmerGasConfigFlow(ConfigFlow, domain=DOMAIN):
     @callback
     def async_get_options_flow(config_entry: ConfigEntry) -> OptionsFlow:
         """Return the options flow for this handler."""
-        return ImmerGasOptionsFlowHandler(config_entry)
+        return ImmerGasOptionsFlowHandler()
 
 
 class ImmerGasOptionsFlowHandler(OptionsFlow):
