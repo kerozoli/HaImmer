@@ -1,0 +1,41 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "path": "API elérési út",
+          "username": "Felhasználónév (nem kötelező)",
+          "password": "Jelszó (nem kötelező)",
+          "scan_interval": "Frissítési időköz (másodperc)",
+          "timeout": "Kérési időkorlát (másodperc)",
+          "stable_threshold": "Stabilizálódási küszöb (másodperc)",
+          "minimum_throttle_threshold": "Minimális gázszabályozási küszöb (másodperc)"
+        },
+        "description": "Az ImmerGas REST integráció beállítása."
+      }
+    },
+    "error": {
+      "cannot_connect": "Nem sikerült csatlakozni. Ellenőrizd a hostot, portot, elérési utat és a hitelesítő adatokat.",
+      "invalid_auth": "Sikertelen hitelesítés. Ellenőrizd a felhasználónevet és a jelszót.",
+      "unknown": "Váratlan hiba."
+    },
+    "abort": {
+      "already_configured": "Az eszköz már konfigurálva van."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "scan_interval": "Frissítési időköz (másodperc)",
+          "timeout": "Kérési időkorlát (másodperc)",
+          "stable_threshold": "Stabilizálódási küszöb (másodperc)",
+          "minimum_throttle_threshold": "Minimális gázszabályozási küszöb (másodperc)"
+        },
+        "description": "Az ImmerGas integráció futásidejű beállításainak módosítása."
+      }
+    }
+  }
+}

@@ -7,7 +7,13 @@ import aiohttp
 import async_timeout
 import voluptuous as vol
 
-from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
+from homeassistant.config_entries import (
+    ConfigEntry,
+    ConfigFlow,
+    ConfigFlowResult,
+    OptionsFlow,
+    OptionsFlowResult,
+)
 from homeassistant.const import (
     CONF_HOST,
     CONF_PASSWORD,
@@ -16,7 +22,7 @@ from homeassistant.const import (
     CONF_TIMEOUT,
     CONF_USERNAME,
 )
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
@@ -51,6 +57,43 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
         ): cv.positive_int,
     }
 )
+
+
+def _options_schema(entry: ConfigEntry) -> vol.Schema:
+    """Return the options schema for an existing config entry."""
+    return vol.Schema(
+        {
+            vol.Optional(
+                CONF_SCAN_INTERVAL,
+                default=entry.options.get(
+                    CONF_SCAN_INTERVAL,
+                    entry.data.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL),
+                ),
+            ): cv.positive_int,
+            vol.Optional(
+                CONF_TIMEOUT,
+                default=entry.options.get(
+                    CONF_TIMEOUT, entry.data.get(CONF_TIMEOUT, DEFAULT_TIMEOUT)
+                ),
+            ): cv.positive_int,
+            vol.Optional(
+                CONF_STABLE_THRESHOLD,
+                default=entry.options.get(
+                    CONF_STABLE_THRESHOLD,
+                    entry.data.get(CONF_STABLE_THRESHOLD, DEFAULT_STABLE_THRESHOLD),
+                ),
+            ): cv.positive_int,
+            vol.Optional(
+                CONF_MINIMUM_THROTTLE_THRESHOLD,
+                default=entry.options.get(
+                    CONF_MINIMUM_THROTTLE_THRESHOLD,
+                    entry.data.get(
+                        CONF_MINIMUM_THROTTLE_THRESHOLD, DEFAULT_MINIMUM_THROTTLE_THRESHOLD
+                    ),
+                ),
+            ): cv.positive_int,
+        }
+    )
 
 
 async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str, str]:
@@ -107,6 +150,28 @@ class ImmerGasConfigFlow(ConfigFlow, domain=DOMAIN):
             step_id="user",
             data_schema=STEP_USER_DATA_SCHEMA,
             errors=errors,
+        )
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry: ConfigEntry) -> OptionsFlow:
+        """Return the options flow for this handler."""
+        return ImmerGasOptionsFlowHandler(config_entry)
+
+
+class ImmerGasOptionsFlowHandler(OptionsFlow):
+    """Handle options flow for ImmerGas."""
+
+    async def async_step_init(
+        self, user_input: dict[str, Any] | None = None
+    ) -> OptionsFlowResult:
+        """Manage the options."""
+        if user_input is not None:
+            return self.async_create_entry(title="", data=user_input)
+
+        return self.async_show_form(
+            step_id="init",
+            data_schema=_options_schema(self.config_entry),
         )
 
 

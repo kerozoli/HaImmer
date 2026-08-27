@@ -38,8 +38,8 @@ from .const import (
     DEFAULT_STABLE_THRESHOLD,
     DEFAULT_TIMEOUT,
     DOMAIN,
-    MINIMUM_THROTTLE_VALUE_KW,
     MINIMUM_THROTTLE_KEY,
+    MINIMUM_THROTTLE_VALUE_KW,
     STABLE_KEY_TEMPERATURE,
 )
 
@@ -51,6 +51,11 @@ STABLE_MAP: dict[str, str] = {
 }
 
 
+def _get_option(config_entry: Any, key: str, default: Any) -> Any:
+    """Read a value from options, falling back to data for existing entries."""
+    return config_entry.options.get(key, config_entry.data.get(key, default))
+
+
 class ImmerGasCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     """Coordinator that polls the ImmerGas REST endpoint."""
 
@@ -60,12 +65,14 @@ class ImmerGasCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self._host = config_entry.data.get(CONF_HOST, DEFAULT_HOST)
         self._port = config_entry.data.get(CONF_PORT, DEFAULT_PORT)
         self._path = config_entry.data.get(CONF_PATH, DEFAULT_PATH)
-        self._timeout = config_entry.data.get(CONF_TIMEOUT, DEFAULT_TIMEOUT)
-        self._stable_threshold = config_entry.data.get(
-            CONF_STABLE_THRESHOLD, DEFAULT_STABLE_THRESHOLD
+        self._timeout = _get_option(
+            config_entry, CONF_TIMEOUT, DEFAULT_TIMEOUT
         )
-        self._minimum_throttle_threshold = config_entry.data.get(
-            CONF_MINIMUM_THROTTLE_THRESHOLD, DEFAULT_MINIMUM_THROTTLE_THRESHOLD
+        self._stable_threshold = _get_option(
+            config_entry, CONF_STABLE_THRESHOLD, DEFAULT_STABLE_THRESHOLD
+        )
+        self._minimum_throttle_threshold = _get_option(
+            config_entry, CONF_MINIMUM_THROTTLE_THRESHOLD, DEFAULT_MINIMUM_THROTTLE_THRESHOLD
         )
         self._url = f"http://{self._host}:{self._port}{self._path}"
         username = config_entry.data.get(CONF_USERNAME, "")
@@ -78,7 +85,9 @@ class ImmerGasCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self._last_changed: dict[str, datetime] = {}
         self._minimum_throttle_since: datetime | None = None
 
-        update_interval = config_entry.data.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
+        update_interval = _get_option(
+            config_entry, CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL
+        )
 
         super().__init__(
             hass,
