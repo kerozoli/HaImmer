@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from typing import Any
 
 import aiohttp
@@ -12,7 +12,6 @@ import async_timeout
 from homeassistant.const import (
     CONF_HOST,
     CONF_PASSWORD,
-    CONF_PATH,
     CONF_PORT,
     CONF_SCAN_INTERVAL,
     CONF_TIMEOUT,
@@ -21,10 +20,10 @@ from homeassistant.const import (
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
-from homeassistant.util import dt as dt_util
 
 from .const import (
     CONF_MINIMUM_THROTTLE_THRESHOLD,
+    CONF_PATH,
     CONF_STABLE_THRESHOLD,
     DATA_KEY_BOILER,
     DATA_KEY_HEATING,
@@ -93,12 +92,12 @@ class ImmerGasCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             hass,
             _LOGGER,
             name=DOMAIN,
-            update_interval=dt_util.parse_duration(f"{update_interval}s"),
+            update_interval=timedelta(seconds=update_interval),
         )
 
     async def _async_update_data(self) -> dict[str, Any]:
         """Fetch data from the ImmerGas REST endpoint."""
-        now = dt_util.utcnow()
+        now = datetime.now(timezone.utc)
         data: dict[str, Any] = {}
 
         try:
