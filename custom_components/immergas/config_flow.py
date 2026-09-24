@@ -155,19 +155,11 @@ class ImmerGasConfigFlow(ConfigFlow, domain=DOMAIN):
     @callback
     def async_get_options_flow(config_entry: ConfigEntry) -> OptionsFlow:
         """Return the options flow for this handler."""
-        return ImmerGasOptionsFlowHandler(config_entry)
+        return ImmerGasOptionsFlowHandler()
 
 
 class ImmerGasOptionsFlowHandler(OptionsFlow):
     """Handle options flow for ImmerGas."""
-
-    def __init__(self, config_entry: ConfigEntry) -> None:
-        """Initialize options flow, compatible with old and new HA."""
-        try:
-            super().__init__(config_entry)
-        except TypeError:
-            super().__init__()
-            self.config_entry = config_entry
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
