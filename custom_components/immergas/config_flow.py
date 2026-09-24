@@ -1,5 +1,6 @@
 """Config flow for the ImmerGas integration."""
 
+import inspect
 import logging
 from typing import Any
 
@@ -155,11 +156,19 @@ class ImmerGasConfigFlow(ConfigFlow, domain=DOMAIN):
     @callback
     def async_get_options_flow(config_entry: ConfigEntry) -> OptionsFlow:
         """Return the options flow for this handler."""
-        return ImmerGasOptionsFlowHandler()
+        return ImmerGasOptionsFlowHandler(config_entry)
 
 
 class ImmerGasOptionsFlowHandler(OptionsFlow):
     """Handle options flow for ImmerGas."""
+
+    def __init__(self, config_entry: ConfigEntry) -> None:
+        """Initialize options flow."""
+        if "config_entry" in inspect.signature(OptionsFlow.__init__).parameters:
+            super().__init__(config_entry)
+        else:
+            super().__init__()
+            self.config_entry = config_entry
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
