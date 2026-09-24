@@ -1,6 +1,5 @@
 """Config flow for the ImmerGas integration."""
 
-import inspect
 import logging
 from typing import Any
 
@@ -163,10 +162,10 @@ class ImmerGasOptionsFlowHandler(OptionsFlow):
     """Handle options flow for ImmerGas."""
 
     def __init__(self, config_entry: ConfigEntry) -> None:
-        """Initialize options flow."""
-        if "config_entry" in inspect.signature(OptionsFlow.__init__).parameters:
+        """Initialize options flow, compatible with old and new HA."""
+        try:
             super().__init__(config_entry)
-        else:
+        except TypeError:
             super().__init__()
             self.config_entry = config_entry
 
